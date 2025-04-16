@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+@theme {
+  --color-base-0: #ffffff;  --color-base-5: #F3F3F3;  --color-base-10: #DDDDDD;
+  --color-base-20: #C6C6C6;  --color-base-30: #B0B0B0;  --color-base-40: #9B9B9B;
+  --color-base-50: #868686;  --color-base-60: #727272;  --color-base-70: #5E5E5E;
+  --color-base-80: #4B4B4B;  --color-base-90: #393939;  --color-base-95: #202020;
+  --color-base-100: #000000;
+
+  --color-red-5: #FFEDEA;  --color-red-10: #FFCAC0;  --color-red-20: #FFA69A;
+  --color-red-30: #FF8278;  --color-red-40: #FF5E5A;  --color-red-50: #FB3B42;
+  --color-red-60: #E2122F;  --color-red-70: #C40021;  --color-red-80: #A10017;
+  --color-red-90: #7C0010;
+
+  --font-Montserrat: Montserrat, "sans-serif";
+  --text-h4: 24px;
+  --text-h5: 18px;
+  --text-bodyM: 16px;
+  --text-bodyS: 14px;
+  --text-caption: 12px;
+}
+
+@font-face {
+  font-family: Montserrat;
+  src: url("../src/assets/fonts/Montserrat-Regular.ttf");
+  --font-weight-medium: 600;
+  --font-weight-normal: 500;
+}
