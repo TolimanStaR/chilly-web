@@ -3,8 +3,10 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import {EmailSchema, VerificationCodeSchema, NewPasswordSchema} from "@/lib/validation/auth";
 import {TextInput, Button, CodeInput} from '@/components/input';
 import {useForgotPasswordStore} from "@/stores/ForgetPasswordStore.ts";
+import {useNavigate} from "react-router-dom";
 
 export const ForgotPassword = () => {
+  const navigate = useNavigate();
   const {
     email, code, newPassword, newPasswordRepeat,
     currentStep,
@@ -48,7 +50,7 @@ export const ForgotPassword = () => {
         <div className="flex mx-auto max-w-[300px] mb-8">
           {['email', 'verifyCode', 'newPassword'].map((step, i) => (
             <div key={step} className="flex-1 flex flex-col items-center">
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center 
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center select-none 
               ${currentStep === step ? 'bg-red-50 text-white' :
                 currentStep.length > step.length ? 'bg-green-500 text-white' : 'bg-base-20'}`}
               >
@@ -72,6 +74,13 @@ export const ForgotPassword = () => {
             />
             <Button type="submit" className="w-full mt-4" isLoading={loading}>
               Продолжить
+            </Button>
+
+            <Button
+              variant={"tertiary"} size={"S"} className={"w-full mt-2"}
+              onClick={() => navigate("/login")}
+            >
+              Назад
             </Button>
           </form>
         )}
