@@ -1,53 +1,35 @@
-import { useState } from 'react';
 import {Controller, useForm} from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ForgotPasswordFlow } from '@/types/auth';
 import {EmailSchema, VerificationCodeSchema, NewPasswordSchema} from "@/lib/validation/auth";
 import {TextInput, Button, CodeInput} from '@/components/input';
+import {useForgotPasswordStore} from "@/stores/ForgetPasswordStore.ts";
 
 export const ForgotPassword = () => {
-  const [flowData, setFlowData] = useState<ForgotPasswordFlow>({
-    email: '',
-    code: '',
-    newPassword: '',
-    newPasswordRepeat: '',
-    currentStep: 'email'
-  });
+  const {
+    email, code, newPassword, newPasswordRepeat,
+    currentStep,
+    requestCode, verifyCode, resetPassword, goBackToEmail,
+    loading, error,
+  } = useForgotPasswordStore();
 
-  // Шаг 1: Ввод email
   const emailForm = useForm({
     resolver: zodResolver(EmailSchema),
-    defaultValues: { email: flowData.email }
+    defaultValues: { email: email }
   });
 
-  // Шаг 2: Ввод кода
   const codeForm = useForm({
     resolver: zodResolver(VerificationCodeSchema),
-    defaultValues: { code: flowData.code }
+    defaultValues: { code: code }
   });
 
-  // Шаг 3: Ввод пароля
   const passwordForm = useForm({
     resolver: zodResolver(NewPasswordSchema),
-    defaultValues: { newPassword: flowData.newPassword, newPasswordRepeat: flowData.newPasswordRepeat }
+    defaultValues: { newPassword: newPassword, newPasswordRepeat: newPasswordRepeat }
   });
 
-  const handleEmailSubmit = async ({ email }: { email: string }) => {
-    // TODO: Запрос кода на бек
-    console.log('Запрос кода для email:', email);
-    setFlowData(prev => ({ ...prev, email, currentStep: 'verifyCode' }));
-  };
-
-  const handleCodeSubmit = async ({ code }: { code: string }) => {
-    // TODO: проверка кода
-    console.log('Проверка кода:', code);
-    setFlowData(prev => ({ ...prev, code, currentStep: 'newPassword' }));
-  };
-
-  const handlePasswordSubmit = async ({ newPassword }: { newPassword: string }) => {
-    // TODO: Отправка нового пароля
-    console.log('Обновление пароля для:', flowData.email, newPassword);
-  };
+  const handleEmailSubmit = ({ email }: { email: string }) => requestCode(email);
+  const handleCodeSubmit = ({ code }: { code: string }) => verifyCode(code);
+  const handlePasswordSubmit = ({ newPassword }: { newPassword: string }) => resetPassword(newPassword);
 
   const { watch } = passwordForm;
   const password = watch("newPassword");
@@ -57,9 +39,9 @@ export const ForgotPassword = () => {
     <div className="flex h-full w-full items-center justify-center px-4 sm:px-6 lg:px-8">
       <div className="w-full max-w-md m-auto rounded-lg">
         <h2 className="text-2xl font-bold mb-6 text-center">
-          {flowData.currentStep === 'email' && 'Восстановление пароля'}
-          {flowData.currentStep === 'verifyCode' && 'Введите код подтверждения'}
-          {flowData.currentStep === 'newPassword' && 'Новый пароль'}
+          {currentStep === 'email' && 'Восстановление пароля'}
+          {currentStep === 'verifyCode' && 'Введите код подтверждения'}
+          {currentStep === 'newPassword' && 'Новый пароль'}
         </h2>
 
         {/* Прогресс-бар */}
@@ -67,12 +49,12 @@ export const ForgotPassword = () => {
           {['email', 'verifyCode', 'newPassword'].map((step, i) => (
             <div key={step} className="flex-1 flex flex-col items-center">
               <div className={`w-8 h-8 rounded-full flex items-center justify-center 
-              ${flowData.currentStep === step ? 'bg-red-50 text-white' :
-                flowData.currentStep.length > step.length ? 'bg-green-500 text-white' : 'bg-base-20'}`}
+              ${currentStep === step ? 'bg-red-50 text-white' :
+                currentStep.length > step.length ? 'bg-green-500 text-white' : 'bg-base-20'}`}
               >
                 {i + 1}
               </div>
-              <div className={`text-caption mt-1 ${flowData.currentStep === step ? 'text-red-50' : 'text-base-40'}`}>
+              <div className={`text-caption mt-1 ${currentStep === step ? 'text-red-50' : 'text-base-40'}`}>
                 {step === 'email' ? 'Email' :
                   step === 'verifyCode' ? 'Код' : 'Пароль'}
               </div>
@@ -81,20 +63,20 @@ export const ForgotPassword = () => {
         </div>
 
         {/* Формы */}
-        {flowData.currentStep === 'email' && (
+        {currentStep === 'email' && (
           <form onSubmit={emailForm.handleSubmit(handleEmailSubmit)}>
             <TextInput
               title="Email"
               {...emailForm.register('email')}
-              errorMessage={emailForm.formState.errors.email?.message}
+              errorMessage={error ? error : emailForm.formState.errors.email?.message}
             />
-            <Button type="submit" className="w-full mt-4">
+            <Button type="submit" className="w-full mt-4" isLoading={loading}>
               Продолжить
             </Button>
           </form>
         )}
 
-        {flowData.currentStep === 'verifyCode' && (
+        {currentStep === 'verifyCode' && (
           <form onSubmit={codeForm.handleSubmit(handleCodeSubmit)} autoComplete={"off"}>
             <Controller
               control={codeForm.control}
@@ -103,28 +85,26 @@ export const ForgotPassword = () => {
                 <CodeInput
                   value={field.value}
                   onChange={field.onChange}
-                  error={codeForm.formState.errors.code?.message}
+                  error={error ? error : codeForm.formState.errors.code?.message}
                   onComplete={(code) => {
                     field.onChange(code);
-                    setFlowData({ ...flowData, code });
+                    handleCodeSubmit({ code });
                   }}
                 />
               )}
             />
 
             <div className="text-sm text-base-40 mt-2">
-              Код отправлен на {flowData.email}
+              Код отправлен на {email}
             </div>
 
             <div className="flex flex-col gap-3 mt-4">
-              <Button type="submit" className="w-full">
+              <Button type="submit" className="w-full" isLoading={loading}>
                 Подтвердить код
               </Button>
 
               <p
-                onClick={() =>
-                  setFlowData((prev) => ({ ...prev, currentStep: "email" }))
-                }
+                onClick={goBackToEmail}
                 className="text-center text-sm w-full font-medium text-blue-600 hover:text-blue-500 cursor-pointer"
               >
                 Изменить email
@@ -133,7 +113,7 @@ export const ForgotPassword = () => {
           </form>
         )}
 
-        {flowData.currentStep === 'newPassword' && (
+        {currentStep === 'newPassword' && (
           <form onSubmit={passwordForm.handleSubmit(handlePasswordSubmit)}>
             <div className={"flex flex-col gap-2"}>
               <TextInput
@@ -141,7 +121,7 @@ export const ForgotPassword = () => {
                 title="Новый пароль"
                 type="password"
                 {...passwordForm.register('newPassword')}
-                errorMessage={passwordForm.formState.errors.newPassword?.message}
+                errorMessage={error ? error: passwordForm.formState.errors.newPassword?.message}
               />
 
               <TextInput
@@ -153,7 +133,10 @@ export const ForgotPassword = () => {
               />
             </div>
 
-            <Button type="submit" className="w-full mt-4" disabled={!(password && repeat && password === repeat)}>
+            <Button
+              type="submit" className="w-full mt-4" isLoading={loading}
+              disabled={!(password && repeat && password === repeat)}
+            >
               Сохранить пароль
             </Button>
           </form>

@@ -16,6 +16,27 @@ export const LoginSchema = z.object({
     .email('Некорректный email'),
   password: z.string()
     .min(8, 'Пароль должен содержать минимум 8 символов')
-    .regex(/[A-Z]/, 'Пароль должен содержать хотя бы одну заглавную букву')
     .regex(/[0-9]/, 'Пароль должен содержать хотя бы одну цифру'),
+});
+
+export const EmailSchema = z.object({
+  email: z.string().email('Некорректный email'),
+});
+
+export const VerificationCodeSchema = z.object({
+  code: z.string().length(6, 'Код должен содержать 6 цифр'),
+});
+
+export const NewPasswordSchema = z.object({
+  newPassword: z.string()
+    .min(8, 'Минимум 8 символов')
+    .regex(/[A-Z]/, 'Должна быть хотя бы одна заглавная буква')
+    .regex(/[0-9]/, 'Должна быть хотя бы одна цифра'),
+  newPasswordRepeat: z.string()
+    .min(8, 'Минимум 8 символов')
+    .regex(/[A-Z]/, 'Должна быть хотя бы одна заглавная буква')
+    .regex(/[0-9]/, 'Должна быть хотя бы одна цифра'),
+}).refine((data) => data.newPassword === data.newPasswordRepeat, {
+  message: "Пароли не совпадают",
+  path: ["newPasswordRepeat"],
 });
