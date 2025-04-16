@@ -57,6 +57,7 @@ export const TextInput: React.FC<TextInputProps> = ({
             id={props.id}
             name={props.name}
             value={props.value}
+            autoComplete={props.autoComplete}
             type={type == "password" ? (showPassword ? "text" : "password") : type}
             onFocus={(e) => {
               if (props.onFocus) props.onFocus(e);
@@ -143,7 +144,7 @@ export const TextInput: React.FC<TextInputProps> = ({
         <span
           className={clsx(
             "text-red-50",
-            inputSize === "M" ? "text-bodyS_regular" : "text-caption_regular"
+            inputSize === "M" ? "text-bodyS" : "text-caption"
           )}
         >
           {errorMessage}

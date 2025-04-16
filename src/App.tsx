@@ -6,7 +6,7 @@ export const App = () => {
     <div className={"font-Montserrat text-lg"}>
       <Header/>
 
-      <main className="h-screen pt-16">
+      <main className="h-screen pt-12">
         <Outlet/>
       </main>
     </div>
