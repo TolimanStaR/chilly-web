@@ -13,8 +13,9 @@ interface ForgetPasswordState {
 interface ForgetPasswordActions {
   requestCode: (email: string) => void;
   verifyCode: (code: string) => void;
-  resetPassword: (password: string) => void;
+  resetPassword: (password: string, callback?: () => void) => void;
   goBackToEmail: () => void;
+  clearForm: () => void;
 }
 
 const initialState: ForgetPasswordState = {
@@ -44,7 +45,7 @@ export const useForgotPasswordStore = create<ForgetPasswordState & ForgetPasswor
       .finally(() => set({ loading: false }));
   },
 
-  verifyCode(code) {
+  verifyCode: (code) => {
     const email = get().email;
     set({ loading: true, error: null });
 
@@ -52,21 +53,31 @@ export const useForgotPasswordStore = create<ForgetPasswordState & ForgetPasswor
       .then((response) => {
         if (response) set({ code, currentStep: 'newPassword' });
       })
-      .catch((_e) =>  set({ error: 'Неверный код' }))
+      .catch(() =>  set({ error: 'Неверный код' }))
       .finally(() => set({ loading: false }));
   },
 
-  resetPassword(password) {
+  resetPassword: (password, callback) => {
     const { email, code } = get();
     set({ loading: true, error: null });
 
     authAPI.updatePassword({ email: email, code: code, password: password })
-      .then((_response) => {})
-      .catch((_e) => set({ error: 'Не удалось изменить пароль' }))
+      .then((response) => {
+        if (response && response.error) {
+          set({ error: response.error });
+        } else {
+          if (callback) callback();
+        }
+      })
+      .catch(() => set({ error: 'Не удалось изменить пароль' }))
       .finally(() => set({ loading: false }));
   },
 
-  goBackToEmail() {
+  goBackToEmail: () => {
     set({ currentStep: 'email', error: null });
+  },
+
+  clearForm: () => {
+    set(initialState);
   }
 }));

@@ -4,13 +4,14 @@ import {EmailSchema, VerificationCodeSchema, NewPasswordSchema} from "@/lib/vali
 import {TextInput, Button, CodeInput} from '@/components/input';
 import {useForgotPasswordStore} from "@/stores/ForgetPasswordStore.ts";
 import {useNavigate} from "react-router-dom";
+import {useEffect} from "react";
 
 export const ForgotPassword = () => {
   const navigate = useNavigate();
   const {
     email, code, newPassword, newPasswordRepeat,
     currentStep,
-    requestCode, verifyCode, resetPassword, goBackToEmail,
+    requestCode, verifyCode, resetPassword, goBackToEmail, clearForm,
     loading, error,
   } = useForgotPasswordStore();
 
@@ -31,11 +32,17 @@ export const ForgotPassword = () => {
 
   const handleEmailSubmit = ({ email }: { email: string }) => requestCode(email);
   const handleCodeSubmit = ({ code }: { code: string }) => verifyCode(code);
-  const handlePasswordSubmit = ({ newPassword }: { newPassword: string }) => resetPassword(newPassword);
+  const handlePasswordSubmit = ({ newPassword }: { newPassword: string }) => {
+    resetPassword(newPassword, () => navigate("/login"));
+  }
 
   const { watch } = passwordForm;
   const password = watch("newPassword");
   const repeat = watch("newPasswordRepeat");
+
+  useEffect(() => {
+    return () => clearForm()
+  }, [clearForm]);
 
   return (
     <div className="flex h-full w-full items-center justify-center px-4 sm:px-6 lg:px-8">
@@ -72,7 +79,7 @@ export const ForgotPassword = () => {
               {...emailForm.register('email')}
               errorMessage={error ? error : emailForm.formState.errors.email?.message}
             />
-            <Button type="submit" className="w-full mt-4" isLoading={loading}>
+            <Button type="submit" className="w-full mt-4" disabled={loading} isLoading={loading}>
               Продолжить
             </Button>
 
@@ -108,7 +115,7 @@ export const ForgotPassword = () => {
             </div>
 
             <div className="flex flex-col gap-3 mt-4">
-              <Button type="submit" className="w-full" isLoading={loading}>
+              <Button type="submit" className="w-full" disabled={loading} isLoading={loading}>
                 Подтвердить код
               </Button>
 
@@ -144,7 +151,7 @@ export const ForgotPassword = () => {
 
             <Button
               type="submit" className="w-full mt-4" isLoading={loading}
-              disabled={!(password && repeat && password === repeat)}
+              disabled={!(password && repeat && password === repeat) || loading}
             >
               Сохранить пароль
             </Button>

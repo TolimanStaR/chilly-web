@@ -30,7 +30,10 @@ export async function confirmCode(
 
     return response.data.verified;
   } catch (e) {
-    console.log(e)
+    if (e instanceof AxiosError) {
+      return { error: "Неизвестная ошибка" };
+    }
+    return { error: "Неизвестная ошибка" };
   }
 }
 
@@ -39,10 +42,13 @@ export async function updatePassword(
 ) {
   try {
     await api.put<{ verified: boolean }>(
-      "/email_code/verification",
-      { email: params.email, code: params.code, password: params.password },
+      "/password/recovery",
+      { email: params.email, code: params.code, newPassword: params.password },
     )
   } catch (e) {
-    console.log(e)
+    if (e instanceof AxiosError) {
+      return { error: "Неизвестная ошибка" };
+    }
+    return { error: "Неизвестная ошибка" };
   }
 }
