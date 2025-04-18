@@ -9,7 +9,7 @@ import {LoginSchema} from "@/lib";
 type LoginFormData = z.infer<typeof LoginSchema>;
 
 export const Login = () => {
-  const { login } = useAuthStore();
+  const { login, loading, error } = useAuthStore();
   const navigate = useNavigate();
 
   const {
@@ -20,13 +20,8 @@ export const Login = () => {
     resolver: zodResolver(LoginSchema),
   });
 
-  const onSubmit = async (data: LoginFormData) => {
-    try {
-      await login(data);
-      navigate('/dashboard');
-    } catch (err) {
-      console.error('Login error:', err);
-    }
+  const onSubmit = (data: LoginFormData) => {
+    login(data, () => navigate('/profile'));
   };
 
   return (
@@ -38,13 +33,19 @@ export const Login = () => {
           </h2>
         </div>
 
+        {error && (
+          <div className={"flex w-full items-center justify-center px-4 py-2 bg-red-5 rounded-2xl"}>
+            <p className={"text-bodyM text-red-70"}>{error}</p>
+          </div>
+        )}
+
         <form className="mt-4 space-y-2" onSubmit={handleSubmit(onSubmit)}>
           <div className="rounded-md space-y-4">
             <TextInput
               title={"Email"} required type={"email"}
-              {...register('email')}
-              autoComplete="email"
-              errorMessage={errors.email?.message}
+              {...register('username')}
+              autoComplete={"email"}
+              errorMessage={errors.username?.message}
             />
 
             <TextInput
@@ -67,7 +68,7 @@ export const Login = () => {
           <Button
             type="submit"
             className="w-full mt-4 justify-center"
-            disabled={isSubmitting}
+            disabled={loading} isLoading={loading}
           >
             {isSubmitting ? 'Вход...' : 'Войти'}
           </Button>

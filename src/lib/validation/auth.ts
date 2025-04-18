@@ -2,16 +2,20 @@ import {z} from "zod";
 
 export const RegistrationSchema = z.object({
   email: z.string().email('Некорректный email'),
+  phoneNumber: z.string().regex(/^\d+$/),
   password: z.string().min(8, 'Пароль должен быть не менее 8 символов'),
   companyName: z.string().min(2, 'Введите название организации'),
   legalAddress: z.string().min(5, 'Введите юридический адрес'),
   inn: z.string().length(10, 'ИНН должен содержать 10 цифр').regex(/^\d+$/),
-  kpp: z.string().length(9, 'КПП должен содержать 9 цифр').regex(/^\d+$/).optional(),
-  okved: z.string().min(2, 'Введите код ОКВЭД'),
+  kpp: z.string().length(9, 'КПП должен содержать 9 цифр').regex(/^\d+$/),
+  businessCategories: z.array(z.object({
+    code: z.string().min(1, "Обязательный код"),
+    name: z.string().min(1, "Обязательное название")
+  })),
 });
 
 export const LoginSchema = z.object({
-  email: z.string()
+  username: z.string()
     .min(1, 'Email обязателен')
     .email('Некорректный email'),
   password: z.string()
@@ -29,13 +33,9 @@ export const VerificationCodeSchema = z.object({
 
 export const NewPasswordSchema = z.object({
   newPassword: z.string()
-    .min(8, 'Минимум 8 символов')
-    .regex(/[A-Z]/, 'Должна быть хотя бы одна заглавная буква')
-    .regex(/[0-9]/, 'Должна быть хотя бы одна цифра'),
+    .min(8, 'Минимум 8 символов'),
   newPasswordRepeat: z.string()
-    .min(8, 'Минимум 8 символов')
-    .regex(/[A-Z]/, 'Должна быть хотя бы одна заглавная буква')
-    .regex(/[0-9]/, 'Должна быть хотя бы одна цифра'),
+    .min(8, 'Минимум 8 символов'),
 }).refine((data) => data.newPassword === data.newPasswordRepeat, {
   message: "Пароли не совпадают",
   path: ["newPasswordRepeat"],

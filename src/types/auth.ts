@@ -1,22 +1,23 @@
 export type RegisterData = {
   email: string;
+  phoneNumber: string,
   password: string;
   companyName: string;
   legalAddress: string;
   inn: string;
-  kpp?: string;
-  okved: string;
+  kpp: string;
+  businessCategories: {
+    code: string;
+    name: string;
+  }[];
 }
 
 export type LoginData = {
-  email: string;
+  username: string;
   password: string;
 }
 
-export type ForgotPasswordFlow = {
-  email: string;
-  code: string;
-  newPassword: string;
-  newPasswordRepeat: string;
-  currentStep: 'email' | 'verifyCode' | 'newPassword';
-};
+export type Tokens = {
+  accessToken: string,
+  refreshToken: string
+}
