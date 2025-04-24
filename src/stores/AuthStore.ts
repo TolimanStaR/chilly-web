@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import {User} from "@/types/user";
 import {LoginData, RegisterData} from "@/types/auth";
-import {login, register} from "@/api/auth.ts";
+import {getInfo, login, register} from "@/api/auth.ts";
 import {access_token, refresh_token} from "@/assets/constants/storage.ts";
 
 type AuthState = {
@@ -14,6 +14,7 @@ type AuthState = {
 type AuthActions = {
   register: (credentials: RegisterData, callback?: () => void) => void;
   login: (credentials: LoginData, callback?: () => void) => void;
+  me: () => void;
   logout: () => void;
 }
 
@@ -61,10 +62,25 @@ const useAuthStore = create<AuthState & AuthActions>((set) => ({
       .finally(() => set({ loading: false }));
   },
 
+  me: () => {
+    set({ loading: true, error: null })
+
+    getInfo()
+      .then((response) => {
+        if (response && response.error) {
+          set({ error: response.error })
+        } else if (response && response.data) {
+          set({ user: response.data })
+        }
+      })
+      .catch((e) => set({ error: e.message }))
+      .finally(() => set({ loading: false }))
+  },
+
   logout: () => {
-    set({ token: null })
     localStorage.removeItem(access_token)
     localStorage.removeItem(refresh_token)
+    set({ token: null, user: null, loading: false, error: null })
   },
 }));
 

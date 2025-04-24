@@ -1,9 +1,9 @@
 export type User = {
-  id: number;
   email: string;
+  phoneNumber: string;
   companyName: string;
   legalAddress: string;
   inn: string;
   kpp: string;
-  okved: string;
+  businessCategories: { code: string; name: string }[];
 }
