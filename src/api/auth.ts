@@ -1,8 +1,8 @@
-import {LoginData, RegisterData, Tokens} from "@/types/auth.ts";
+import {LoginData, RegisterData, Tokens} from "@/types/auth.types.ts";
 import api from "@/api/AxiosConfig.ts";
 import {AxiosError} from "axios";
 import {access_token} from "@/assets/constants/storage.ts";
-import {User} from "@/types/user.ts";
+import {User} from "@/types/user.types.ts";
 
 export async function register(params: { data: RegisterData }) {
   try {

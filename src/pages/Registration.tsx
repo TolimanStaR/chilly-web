@@ -4,7 +4,7 @@ import useAuthStore from '@/stores/AuthStore';
 import {Button, TextInput} from "@/components/input";
 import { RegistrationSchema } from "@/lib";
 import {Link, useNavigate} from "react-router-dom";
-import { RegisterData } from '@/types/auth';
+import { RegisterData } from '@/types/auth.types.ts';
 
 export const Register = () => {
   const { register: authRegister, loading } = useAuthStore();

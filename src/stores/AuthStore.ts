@@ -1,6 +1,6 @@
 import { create } from 'zustand';
-import {User} from "@/types/user";
-import {LoginData, RegisterData} from "@/types/auth";
+import {User} from "@/types/user.types";
+import {LoginData, RegisterData} from "@/types/auth.types";
 import {getInfo, login, register} from "@/api/auth.ts";
 import {access_token, refresh_token} from "@/assets/constants/storage.ts";
 

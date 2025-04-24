@@ -1,64 +1,39 @@
 import { Button } from "@/components/input";
+import {NavLink, Outlet} from "react-router-dom";
 import useAuthStore from "@/stores/AuthStore.ts";
-import {useEffect, useState} from "react";
-import {InfoWidget} from "@/components/profile";
-import {PlaceRequestsWidget} from "@/components/profile/PlaceRequestsWidget.tsx";
-import {TabButton} from "@/components/navigation/TabButton.tsx";
 
 export const Profile = () => {
-  const {
-    logout, user, me,
-    error, loading
-  } = useAuthStore();
-  const [activeTab, setActiveTab] = useState<"info" | "applications">("info");
-
-  useEffect(() => {
-    if(!user) me();
-  }, [me, user]);
-
-  if (error) {
-    return (
-      <div className="text-center mt-10 text-gray-600">
-        {error}
-
-        <Button variant="primary" size="M" className="w-full max-w-[300px] mx-auto mt-4" onClick={() => logout()}>
-          Выйти
-        </Button>
-      </div>
-    );
-  }
-
-  if (loading || !user) {
-    return <div className="text-center mt-10 text-gray-600">Загрузка данных профиля...</div>;
-  }
+  const { logout } = useAuthStore();
 
   return (
-    <div className="flex flex-col items-center w-full px-4 py-8">
-      <div className="w-full max-w-[1000px] space-y-4">
-        <h2 className="text-2xl font-bold text-center">Профиль организации</h2>
-
-        <div className="flex justify-center gap-4">
-          <TabButton
-            isActive={activeTab === "info"}
-            onClick={() => setActiveTab("info")}
-            label="Информация"
-          />
-          <TabButton
-            isActive={activeTab === "applications"}
-            onClick={() => setActiveTab("applications")}
-            label="Мои заявки"
-          />
-        </div>
-
-        <div className="bg-white p-4 rounded-lg">
-          {activeTab === "info" && <InfoWidget user={user}/>}
-          {activeTab === "applications" && <PlaceRequestsWidget/>}
-        </div>
-
-        <Button variant="primary" size="M" className="w-full max-w-[300px] mx-auto" onClick={() => logout()}>
-          Выйти
-        </Button>
+    <div className="flex flex-col p-6 max-w-4xl mx-auto space-y-6">
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold">Профиль</h2>
+        <Button variant="tertiary" size="S" onClick={logout}>Выйти</Button>
       </div>
+
+      {/* Навигация по разделам */}
+      <div className="flex gap-4 border-b-[3px] border-b-base-10 pb-2">
+        <NavLink
+          to="info"
+          className={({isActive}) =>
+            `text-bodyM font-medium pb-1 w-full max-w-[150px] text-center border-b-2 ${isActive ? "border-red-50 text-red-60" : "border-transparent text-base-50"}`
+          }
+        >
+          Информация
+        </NavLink>
+        <NavLink
+          to="requests"
+          className={({isActive}) =>
+            `text-bodyM font-medium pb-1 w-full max-w-[150px] text-center border-b-2 ${isActive ? "border-red-50 text-red-60" : "border-transparent text-base-50"}`
+          }
+        >
+          Мои заявки
+        </NavLink>
+      </div>
+
+      {/* Контент подстраницы */}
+      <Outlet/>
     </div>
   );
 };

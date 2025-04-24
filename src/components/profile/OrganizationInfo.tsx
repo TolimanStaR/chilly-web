@@ -1,16 +1,36 @@
-import React from "react";
+import {useEffect} from "react";
 import {InfoField} from "@/components/layout";
-import {User} from "@/types/user.ts";
+import useAuthStore from "@/stores/AuthStore.ts";
+import {Button} from "@/components/input";
 
-interface InfoWidgetProps {
-  user: User;
-}
+export const OrganizationInfo = () => {
+  const {
+    logout, user, me,
+    error, loading
+  } = useAuthStore();
 
-export const InfoWidget: React.FC<InfoWidgetProps> = ({
-  user
-}) => {
+  useEffect(() => {
+    if(!user) me();
+  }, [me, user]);
+
+  if (error) {
+    return (
+      <div className="text-center mt-10 text-gray-600">
+        {error}
+
+        <Button variant="primary" size="M" className="w-full max-w-[300px] mx-auto mt-4" onClick={() => logout()}>
+          Выйти
+        </Button>
+      </div>
+    );
+  }
+
+  if (loading || !user) {
+    return <div className="text-center mt-10 text-gray-600">Загрузка данных профиля...</div>;
+  }
+
   return (
-    <div className="space-y-2 bg-white rounded-lg w-full max-w-[500px] mx-auto">
+    <div className="space-y-2 bg-white rounded-lg w-full mx-auto">
       <InfoField label="Email" value={user.email}/>
       <InfoField label="Телефон" value={user.phoneNumber}/>
 
