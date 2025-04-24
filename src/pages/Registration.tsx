@@ -14,8 +14,9 @@ export const Register = () => {
     register,
     handleSubmit,
     control,
-    formState: { errors }
-  } = useForm<RegisterData>({
+    watch,
+    formState: { errors },
+  } = useForm<RegisterData  & { repeatPassword: string }>({
     resolver: zodResolver(RegistrationSchema),
     defaultValues: {
       businessCategories: []
@@ -31,6 +32,9 @@ export const Register = () => {
     authRegister(data, () => navigate("/login"));
   };
 
+  const password = watch('password');
+  const repeatPassword = watch('repeatPassword');
+
   return (
     <div className={"flex flex-col h-full w-full"}>
       <div className="flex flex-col space-y-4 h-fit w-fit m-auto p-8">
@@ -42,7 +46,7 @@ export const Register = () => {
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-2 w-full max-w-md">
           <TextInput
-            title="Email" required type="email"
+            title="Email" required type="email" autoComplete={"email"}
             {...register('email')}
             errorMessage={errors.email?.message}
           />
@@ -54,26 +58,38 @@ export const Register = () => {
           />
 
           <TextInput
-            title="Пароль" required type="password"
+            title="Пароль" required type="password" autoComplete={"new-password"}
             {...register('password')}
             errorMessage={errors.password?.message}
           />
 
           <TextInput
-            title="Наименование организации" required
+            title="Повторите пароль" required type="password" autoComplete={"off"}
+            {...register('repeatPassword')}
+            errorMessage={
+              repeatPassword && password !== repeatPassword
+                ? 'Пароли не совпадают'
+                : undefined
+            }
+          />
+
+          <div className={"h-[3px] w-full bg-base-5 my-4"}/>
+
+          <TextInput
+            title="Наименование организации" required autoComplete={"organization"}
             {...register('companyName')}
             errorMessage={errors.companyName?.message}
           />
 
           <TextInput
-            title="Юридический адрес" required
+            title="Юридический адрес" required autoComplete={"street-address"}
             {...register('legalAddress')}
             errorMessage={errors.legalAddress?.message}
           />
 
           <div className="grid grid-cols-2 gap-4">
-            <TextInput title="ИНН" required {...register('inn')} errorMessage={errors.inn?.message}/>
-            <TextInput title="КПП" {...register('kpp')} errorMessage={errors.kpp?.message}/>
+            <TextInput title="ИНН" required {...register('inn')} autoComplete={"off"} errorMessage={errors.inn?.message}/>
+            <TextInput title="КПП" {...register('kpp')} autoComplete={"off"} errorMessage={errors.kpp?.message}/>
           </div>
 
           <div className="flex flex-col gap-2">
@@ -116,7 +132,7 @@ export const Register = () => {
 
           <Button
             type="submit" variant="primary" size="M" className="w-full mt-4"
-            disabled={loading} isLoading={loading}
+            disabled={loading || password !== repeatPassword} isLoading={loading}
           >
             Зарегистрироваться
           </Button>
