@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import {PlaceRequest} from "@/types/requests.types.ts";
-import {createRequest, deleteRequest, getRequests} from "@/api/placeRequests.ts";
+import {createRequest, deleteRequest, getRequests, updateRequest} from "@/api/placeRequests.ts";
 import {PlaceInfo} from "@/types/places.types.ts";
 
 type PlaceRequestsState = {
@@ -12,6 +12,7 @@ type PlaceRequestsState = {
 type PlaceRequestsActions = {
   getPlaceRequests: () => void;
   createPlaceRequest: (placeRequest: Omit<PlaceInfo, "id">, callback?: () => void) => void;
+  updatePlaceRequest: (id: number | string, placeRequest: Omit<PlaceInfo, "id">, callback?: () => void) => void;
   deletePlaceRequest: (id: number) => void;
 }
 
@@ -43,6 +44,22 @@ export const usePlaceRequestsStore = create<PlaceRequestsState & PlaceRequestsAc
     set({ loading: true, error: null })
 
     createRequest({ data: placeRequest })
+      .then((response) => {
+        if (response && response.error) {
+          set({ error: response.error })
+        } else {
+          get().getPlaceRequests();
+          if (callback) callback();
+        }
+      })
+      .catch((e) => set({ error: e.message }))
+      .finally(() => set({ loading: false }))
+  },
+
+  updatePlaceRequest: (id, placeRequest, callback) => {
+    set({ loading: true, error: null })
+    console.log("update", placeRequest)
+    updateRequest({ id: id, data: placeRequest })
       .then((response) => {
         if (response && response.error) {
           set({ error: response.error })

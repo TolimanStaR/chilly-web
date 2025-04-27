@@ -42,6 +42,25 @@ export async function getRequests() {
   }
 }
 
+export async function updateRequest(params: { id: string | number, data: Omit<PlaceInfo, "id"> }) {
+  try {
+    const token = localStorage.getItem(access_token);
+
+    await api.put(
+      `/business/place_requests/${params.id}`,
+      params.data,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    )
+  } catch {
+    return { error: "Ошибка удаления заявки" }
+  }
+}
+
+
 export async function deleteRequest(params: { id: number }) {
   try {
     const token = localStorage.getItem(access_token);
