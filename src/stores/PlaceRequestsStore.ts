@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import {PlaceRequest} from "@/types/requests.types.ts";
-import {getRequests} from "@/api/placeRequests.ts";
+import {createRequest, deleteRequest, getRequests} from "@/api/placeRequests.ts";
+import {PlaceInfo} from "@/types/places.types.ts";
 
 type PlaceRequestsState = {
   placeRequests?: PlaceRequest[];
@@ -10,6 +11,7 @@ type PlaceRequestsState = {
 
 type PlaceRequestsActions = {
   getPlaceRequests: () => void;
+  createPlaceRequest: (placeRequest: Omit<PlaceInfo, "id">, callback?: () => void) => void;
   deletePlaceRequest: (id: number) => void;
 }
 
@@ -18,7 +20,7 @@ const initialState: PlaceRequestsState = {
   error: null
 }
 
-export const usePlaceRequestsStore = create<PlaceRequestsState & PlaceRequestsActions>((set) => ({
+export const usePlaceRequestsStore = create<PlaceRequestsState & PlaceRequestsActions>((set,get) => ({
   ...initialState,
 
   getPlaceRequests: () => {
@@ -26,6 +28,7 @@ export const usePlaceRequestsStore = create<PlaceRequestsState & PlaceRequestsAc
 
     getRequests()
       .then((response) => {
+        console.log(response);
         if (response && response.error) {
           set({ error: response.error })
         } else if (response && response.data) {
@@ -36,7 +39,31 @@ export const usePlaceRequestsStore = create<PlaceRequestsState & PlaceRequestsAc
       .finally(() => set({ loading: false }))
   },
 
-  deletePlaceRequest: () => {
+  createPlaceRequest: (placeRequest, callback) => {
+    set({ loading: true, error: null })
 
+    createRequest({ data: placeRequest })
+      .then((response) => {
+        if (response && response.error) {
+          set({ error: response.error })
+        } else {
+          get().getPlaceRequests();
+          if (callback) callback();
+        }
+      })
+      .catch((e) => set({ error: e.message }))
+      .finally(() => set({ loading: false }))
+  },
+
+  deletePlaceRequest: (id) => {
+    deleteRequest({ id: id })
+      .then((response) => {
+        if (response && response.error) {
+          set({ error: response.error })
+        } else {
+          get().getPlaceRequests();
+        }
+      })
+      .catch((e) => set({ error: e.message }))
   }
 }));

@@ -2,7 +2,7 @@ import {createBrowserRouter, Navigate} from "react-router-dom";
 import {App} from "@/App";
 import {ForgotPassword, Home, Login, Profile, Register} from "@/pages";
 import PrivateRoute from "@/components/navigation/ProtectedRoute.tsx";
-import {OrganizationInfo, PlaceRequests} from "@/components/profile";
+import {CreatePlaceRequest, OrganizationInfo, PlaceRequests} from "@/components/profile";
 
 const router = createBrowserRouter([
   {
@@ -26,6 +26,7 @@ const router = createBrowserRouter([
           { path: "requests", element: <PlaceRequests /> },
         ],
       },
+      { path: "profile/requests/new", element: <CreatePlaceRequest/> }
     ],
   },
 ]);

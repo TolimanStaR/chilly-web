@@ -1,8 +1,10 @@
 import {Button} from "@/components/input";
 import {usePlaceRequestsStore} from "@/stores/PlaceRequestsStore.ts";
 import {useEffect, useState} from "react";
+import {useNavigate} from "react-router-dom";
 
 export const PlaceRequests = () => {
+  const navigate = useNavigate();
   const {
     loading, error, placeRequests,
     getPlaceRequests, deletePlaceRequest
@@ -25,7 +27,7 @@ export const PlaceRequests = () => {
     <div className="space-y-4">
       <div className="flex justify-between items-center">
         <h3 className="text-xl font-bold">Мои заявки</h3>
-        <Button variant="primary" size="S" onClick={() => alert("Открыть форму создания")} leftIcon={"plus"}>
+        <Button variant="primary" size="S" onClick={() => navigate("new")} leftIcon={"plus"}>
           Новая заявка
         </Button>
       </div>
@@ -35,11 +37,11 @@ export const PlaceRequests = () => {
       ) : placeRequests.length === 0 ? (
         <p className="text-gray-600">Нет активных заявок.</p>
       ) : (
-        <ul className="space-y-2">
+        <ul className="space-y-4">
           {placeRequests.map((request) => (
             <li
-              key={request.placeInfo.id}
-              className="border rounded p-4 shadow-sm transition hover:shadow-md bg-white"
+              key={request.id}
+              className="rounded p-4 shadow-sm transition hover:shadow-md bg-white"
             >
               <div className="flex justify-between items-start">
                 <div>
@@ -51,28 +53,30 @@ export const PlaceRequests = () => {
                     variant="tertiary"
                     size="S"
                     onClick={() =>
-                      setExpandedId(expandedId === request.placeInfo.id ? null : request.placeInfo.id)
+                      setExpandedId(expandedId === request.id ? null : request.id)
                     }
                   >
-                    {expandedId === request.placeInfo.id ? "Свернуть" : "Подробнее"}
+                    {expandedId === request.id ? "Свернуть" : "Подробнее"}
                   </Button>
                   <Button
                     variant="primary"
                     size="S"
-                    onClick={() => deletePlaceRequest(request.placeInfo.id)}
+                    onClick={() => deletePlaceRequest(request.id)}
                   >
                     Удалить
                   </Button>
                 </div>
               </div>
 
-              {expandedId === request.placeInfo.id && (
+              {expandedId === request.id && (
                 <div className="mt-3 text-sm text-gray-800 space-y-1">
                   <p><strong>Сайт:</strong> <a href={request.placeInfo.website} target="_blank"
                                                className="text-blue-600 underline">{request.placeInfo.website}</a></p>
                   <p><strong>Телефон:</strong> {request.placeInfo.phone}</p>
                   <p><strong>Оценка:</strong> {request.placeInfo.rating}</p>
-                  <p><strong>Y-страница:</strong> {request.placeInfo.ypage}</p>
+                  <p><a href={request.placeInfo.ypage} target="_blank"
+                        className="text-blue-600 underline"><strong>Yandex страница</strong></a>
+                  </p>
 
                   {request.placeInfo.social?.length > 0 && (
                     <p><strong>Соцсети:</strong> {request.placeInfo.social.join(", ")}</p>

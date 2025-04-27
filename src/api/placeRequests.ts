@@ -1,14 +1,22 @@
 import api from "@/api/AxiosConfig.ts";
 import {access_token} from "@/assets/constants/storage.ts";
 import {PlaceRequest} from "@/types/requests.types.ts";
+import {PlaceInfo} from "@/types/places.types.ts";
 
 export async function createRequest(
-  params: { email: string }
+  params: { data: Omit<PlaceInfo, "id"> }
 ) {
   try {
+    const token = localStorage.getItem(access_token);
+
     await api.post(
       "/business/place_requests",
-      { email: params.email },
+      params.data,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
     )
   } catch {
     return { error: "Ошибка размещения заявки" }
@@ -34,3 +42,19 @@ export async function getRequests() {
   }
 }
 
+export async function deleteRequest(params: { id: number }) {
+  try {
+    const token = localStorage.getItem(access_token);
+
+    await api.delete(
+      `/business/place_requests/${params.id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    )
+  } catch {
+    return { error: "Ошибка удаления заявки" }
+  }
+}

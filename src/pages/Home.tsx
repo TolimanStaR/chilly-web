@@ -1,7 +1,12 @@
 import {IconButton, Radio, TextInput} from "@/components/input";
 import {Checkbox} from "@/components/input";
+import {useEffect} from "react";
 
 export const Home = () => {
+  useEffect(() => {
+    document.title = "Chilly для бизнеса"
+  }, []);
+
   return (
     <div className={"flex flex-col w-full max-w-[1000px] mx-auto items-center justify-center gap-2"}>
       <IconButton icon={"link"} size={"S"}/>

@@ -1,7 +1,8 @@
 import {PlaceInfo} from "@/types/places.types.ts";
 
 export type PlaceRequest = {
-  businessId: number,
+  id: number,
+  ownerId: number,
   timestamp: number,
   status: string,
   reason: string,

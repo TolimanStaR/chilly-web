@@ -1,9 +1,14 @@
 import { Button } from "@/components/input";
 import {NavLink, Outlet} from "react-router-dom";
 import useAuthStore from "@/stores/AuthStore.ts";
+import {useEffect} from "react";
 
 export const Profile = () => {
   const { logout } = useAuthStore();
+
+  useEffect(() => {
+    document.title = "Профиль организации"
+  }, []);
 
   return (
     <div className="flex flex-col p-6 max-w-4xl mx-auto space-y-6">
