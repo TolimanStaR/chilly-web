@@ -1,19 +1,13 @@
 import React from "react";
 import {Button} from "@/components/input";
-import {PlaceRequest} from "@/types/requests.types.ts";
-import {Icon} from "@/components/icons/Icon.tsx";
-import {Tooltip} from "@/components/layout";
+import {PlaceInfo} from "@/types/places.types.ts";
 
-interface RequestCardProps {
-  request: PlaceRequest,
-  onEdit: () => void,
-  onDelete: () => void,
+interface PlaceCardProps {
+  place: PlaceInfo,
 }
 
-export const RequestCard: React.FC<RequestCardProps> = ({
-  request,
-  onEdit,
-  onDelete,
+export const PlaceCard: React.FC<PlaceCardProps> = ({
+  place,
 }) => {
   const [expanded, setExpanded] = React.useState(false);
   const contentRef = React.useRef<HTMLDivElement>(null);
@@ -21,55 +15,19 @@ export const RequestCard: React.FC<RequestCardProps> = ({
   return (
     <div
       className="rounded-xl p-4 shadow-[0_4px_16px_0px_rgba(0,0,0,0.06)] transition hover:shadow-[0_2px_16px_0px_rgba(0,0,0,0.12)] bg-white">
-      <div className="flex flex-col lg:flex-row justify-between items-center gap-2">
+      <div className="flex flex-col sm:flex-row justify-between items-center">
         <div>
-          <div className={"flex flex-row items-center gap-2"}>
-            <Tooltip
-              text={request.status == "CREATED" ? "На рассмотрении" : request.status == "APPROVED" ? "Одобрено" : "Отклонено"}
-            >
-              <Icon
-                name={request.status == "CREATED" ? "pending" : request.status == "APPROVED" ? "approved" : "decline"}
-                color={request.status == "CREATED" ? "#868686" : request.status == "APPROVED" ? "#008f03" : "#FB3B42"}
-                size={18}
-              />
-            </Tooltip>
-
-            <h4 className="font-semibold text-lg">{request.placeInfo.name}</h4>
-          </div>
-
-          {request.reason && (
-            <p className={"text-red-70 text-bodyS bg-red-5 px-2 rounded-2xl w-fit text-center"}>
-              {request.reason}
-            </p>
-          )}
-
-          <p className="text-sm text-gray-600">{request.placeInfo.address}</p>
+          <h4 className="font-semibold text-lg">{place.name}</h4>
+          <p className="text-sm text-gray-600">{place.address}</p>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-2 items-center">
+        <div className="flex flex-col gap-2 lg:flex-row items-center">
           <Button
             variant={"tertiary"}
             size={"S"}
             onClick={() => setExpanded(!expanded)}
           >
             {expanded ? "Свернуть" : "Подробнее"}
-          </Button>
-
-          <Button
-            variant={"tertiary"}
-            size={"S"}
-            disabled={request.status != "CREATED"}
-            onClick={onEdit}
-          >
-            Редактировать
-          </Button>
-
-          <Button
-            variant={"primary"}
-            size={"S"}
-            onClick={onDelete}
-          >
-            Удалить
           </Button>
         </div>
       </div>
@@ -90,12 +48,12 @@ export const RequestCard: React.FC<RequestCardProps> = ({
               <td className={"py-2 font-medium w-1/4"}>Сайт</td>
               <td className={"p-2"}>
                 <a
-                  href={request.placeInfo.website}
+                  href={place.website}
                   target={"_blank"}
                   rel={"noopener noreferrer"}
                   className={"text-blue-600 underline hover:text-blue-800"}
                 >
-                  {request.placeInfo.website}
+                  {place.website}
                 </a>
               </td>
             </tr>
@@ -103,13 +61,13 @@ export const RequestCard: React.FC<RequestCardProps> = ({
             {/* Строка с телефоном */}
             <tr className={"border-b border-gray-100"}>
               <td className={"py-2 font-medium"}>Телефон</td>
-              <td className={"p-2"}>{request.placeInfo.phone}</td>
+              <td className={"p-2"}>{place.phone}</td>
             </tr>
 
             {/* Строка с оценкой */}
             <tr className={"border-b border-gray-100"}>
               <td className={"py-2 font-medium"}>Оценка</td>
-              <td className={"p-2"}>{request.placeInfo.rating}</td>
+              <td className={"p-2"}>{place.rating}</td>
             </tr>
 
             {/* Строка с Яндекс страницей */}
@@ -117,23 +75,23 @@ export const RequestCard: React.FC<RequestCardProps> = ({
               <td className={"py-2 font-medium"}>Yandex страница</td>
               <td className={"p-2"}>
                 <a
-                  href={request.placeInfo.ypage}
+                  href={place.ypage}
                   target={"_blank"}
                   rel={"noopener noreferrer"}
                   className={"text-blue-600 underline hover:text-blue-800"}
                 >
-                  {request.placeInfo.ypage}
+                  {place.ypage}
                 </a>
               </td>
             </tr>
 
             {/* Строка с соцсетями */}
-            {request.placeInfo.social?.length > 0 && (
+            {place.social?.length > 0 && (
               <tr className={"border-b border-gray-100"}>
                 <td className={"py-2 font-medium"}>Соцсети</td>
                 <td className={"p-2"}>
                   <ul className={"list-inside"}>
-                    {request.placeInfo.social.map((link, index) => (
+                    {place.social.map((link, index) => (
                       <li>
                         <a
                           key={index}
@@ -152,12 +110,12 @@ export const RequestCard: React.FC<RequestCardProps> = ({
             )}
 
             {/* Строка с часами работы */}
-            {request.placeInfo.openHours?.length > 0 && (
+            {place.openHours?.length > 0 && (
               <tr className={"border-b border-gray-100"}>
                 <td className={"py-2 font-medium"}>Часы работы</td>
                 <td className={"p-2"}>
                   <ul className={"list-inside"}>
-                    {request.placeInfo.openHours.map((hours, index) => (
+                    {place.openHours.map((hours, index) => (
                       <li key={index}>{hours}</li>
                     ))}
                   </ul>
@@ -168,11 +126,11 @@ export const RequestCard: React.FC<RequestCardProps> = ({
           </table>
 
           {/* Блок с изображениями */}
-          {request.placeInfo.images?.length > 0 && (
+          {place.images?.length > 0 && (
             <div className={"mt-3"}>
               <h5 className={"font-medium mb-2"}>Изображения</h5>
               <div className={"flex flex-wrap gap-2"}>
-                {request.placeInfo.images.map((img, idx) => (
+                {place.images.map((img, idx) => (
                   <img
                     key={idx}
                     src={img}

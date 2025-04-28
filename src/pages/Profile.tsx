@@ -22,18 +22,28 @@ export const Profile = () => {
         <NavLink
           to="info"
           className={({isActive}) =>
-            `text-bodyM font-medium pb-1 w-full max-w-[150px] text-center border-b-2 ${isActive ? "border-red-50 text-red-60" : "border-transparent text-base-50"}`
+            `text-bodyM font-medium pb-1 w-full max-w-[150px] text-center place-content-center border-b-2 ${isActive ? "border-red-50 text-red-60" : "border-transparent text-base-50"}`
           }
         >
           Информация
         </NavLink>
+
         <NavLink
           to="requests"
           className={({isActive}) =>
-            `text-bodyM font-medium pb-1 w-full max-w-[150px] text-center border-b-2 ${isActive ? "border-red-50 text-red-60" : "border-transparent text-base-50"}`
+            `text-bodyM font-medium pb-1 w-full max-w-[150px] text-center place-content-center border-b-2 ${isActive ? "border-red-50 text-red-60" : "border-transparent text-base-50"}`
           }
         >
           Мои заявки
+        </NavLink>
+
+        <NavLink
+          to="places"
+          className={({isActive}) =>
+            `text-bodyM font-medium pb-1 w-full max-w-[150px] text-center place-content-center border-b-2 ${isActive ? "border-red-50 text-red-60" : "border-transparent text-base-50"}`
+          }
+        >
+          Мои места
         </NavLink>
       </div>
 
