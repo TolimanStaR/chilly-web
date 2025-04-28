@@ -1,6 +1,7 @@
 import React from "react";
 import {Button} from "@/components/input";
 import {PlaceRequest} from "@/types/requests.types.ts";
+import {Icon} from "@/components/icons/Icon.tsx";
 
 interface RequestCardProps {
   request: PlaceRequest,
@@ -20,7 +21,15 @@ export const RequestCard: React.FC<RequestCardProps> = ({
     <div className="rounded-xl p-4 shadow-[0_4px_16px_0px_rgba(0,0,0,0.06)] transition hover:shadow-[0_2px_16px_0px_rgba(0,0,0,0.12)] bg-white">
       <div className="flex justify-between items-center">
         <div>
-          <h4 className="font-semibold text-lg">{request.placeInfo.name}</h4>
+          <div className={"flex flex-row items-center gap-2"}>
+            <Icon
+              name={request.status == "CREATED" ? "pending" : request.status == "APPROVED" ? "approved" : "decline"}
+              color={request.status == "CREATED" ? "#868686" : request.status == "APPROVED" ? "#008f03" : "#FB3B42"}
+              size={18}
+            />
+
+            <h4 className="font-semibold text-lg">{request.placeInfo.name}</h4>
+          </div>
           <p className="text-sm text-gray-600">{request.placeInfo.address}</p>
         </div>
 

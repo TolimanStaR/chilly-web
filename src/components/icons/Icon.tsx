@@ -4,6 +4,7 @@ import * as Icons from "./svg";
 export const icons = {
   account: Icons.Account,
   admin: Icons.Admin,
+  approved: Icons.Approved,
   bell: Icons.Bell,
   bellBadge: Icons.BellBadge,
   checkboxBlank: Icons.CheckboxBlank,
@@ -14,6 +15,7 @@ export const icons = {
   chevronUp: Icons.ChevronUp,
   chilly: Icons.Chilly,
   close: Icons.Close,
+  decline: Icons.Decline,
   edit: Icons.Edit,
   eye: Icons.Eye,
   eyeOff: Icons.EyeOff,
@@ -25,6 +27,7 @@ export const icons = {
   logout: Icons.Logout,
   members: Icons.Members,
   menu: Icons.Menu,
+  pending: Icons.Pending,
   photo: Icons.Photo,
   plus: Icons.Plus,
   radioBlank: Icons.RadioBlank,
