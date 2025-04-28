@@ -3,6 +3,8 @@ import {Button} from "@/components/input";
 import {PlaceRequest} from "@/types/requests.types.ts";
 import {Icon} from "@/components/icons/Icon.tsx";
 import {Tooltip} from "@/components/layout";
+import {Gallery, Item} from 'react-photoswipe-gallery';
+import 'photoswipe/dist/photoswipe.css';
 
 interface RequestCardProps {
   request: PlaceRequest,
@@ -171,16 +173,30 @@ export const RequestCard: React.FC<RequestCardProps> = ({
           {request.placeInfo.images?.length > 0 && (
             <div className={"mt-3"}>
               <h5 className={"font-medium mb-2"}>Изображения</h5>
-              <div className={"flex flex-wrap gap-2"}>
-                {request.placeInfo.images.map((img, idx) => (
-                  <img
-                    key={idx}
-                    src={img}
-                    alt={`image-${idx}`}
-                    className={"w-20 h-20 object-cover rounded border border-gray-200"}
-                  />
-                ))}
-              </div>
+              <Gallery>
+                <div className={"flex flex-wrap gap-2"}>
+                  {request.placeInfo.images.map((img, idx) => (
+                    <Item
+                      key={idx}
+                      original={img}
+                      thumbnail={img}
+                      width={1024}
+                      height={768}
+                      alt={`image-${idx}`}
+                    >
+                      {({ref, open}) => (
+                        <img
+                          ref={ref}
+                          onClick={open}
+                          src={img}
+                          alt={`image-${idx}`}
+                          className={"w-20 h-20 object-cover rounded border border-gray-200 cursor-pointer hover:opacity-80 transition-opacity"}
+                        />
+                      )}
+                    </Item>
+                  ))}
+                </div>
+              </Gallery>
             </div>
           )}
         </div>
