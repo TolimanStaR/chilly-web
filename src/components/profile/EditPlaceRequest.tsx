@@ -1,7 +1,7 @@
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { NewPlaceRequestSchema } from "@/lib/validation/placeRequest";
-import { Button, TextInput } from "@/components/input";
+import {Button, MapSelector, TextInput} from "@/components/input";
 import { usePlaceRequestsStore } from "@/stores/PlaceRequestsStore.ts";
 import { PlaceInfoFormData } from "@/types/places.types";
 import { useEffect } from "react";
@@ -22,6 +22,7 @@ export const EditPlaceRequest = () => {
     handleSubmit,
     formState: { errors },
     reset,
+    setValue, watch
   } = useForm<PlaceInfoFormData>({
     resolver: zodResolver(NewPlaceRequestSchema),
   });
@@ -40,12 +41,7 @@ export const EditPlaceRequest = () => {
     name: "social",
   });
 
-  const {
-    fields: openHoursFields, append: appendOpenHour, remove: removeOpenHour
-  } = useFieldArray<PlaceInfoFormData>({
-    control,
-    name: "openHours",
-  });
+  const daysOfWeek = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"];
 
   useEffect(() => {
     if (id) {
@@ -114,31 +110,40 @@ export const EditPlaceRequest = () => {
           errorMessage={errors.ypage?.message}
         />
 
-        <div className="grid grid-cols-2 gap-4">
-          <TextInput
-            title="Широта (Latitude)"
-            type="number"
-            step="any"
-            {...register("latitude", { valueAsNumber: true })}
-            errorMessage={errors.latitude?.message}
-          />
+        <div>
+          <p className={"text-bodyS"}>Выберите местоположение на карте</p>
 
-          <TextInput
-            title="Долгота (Longitude)"
-            type="number"
-            step="any"
-            {...register("longitude", { valueAsNumber: true })}
-            errorMessage={errors.longitude?.message}
-          />
+          <div className={"rounded-xl overflow-hidden"}>
+            <MapSelector
+              onChange={(lat, lon) => {
+                setValue("latitude", lat);
+                setValue("longitude", lon);
+              }}
+              setAddress={(address) => {
+                setValue("address", address);
+              }}
+              latitude={watch("latitude")}
+              longitude={watch("longitude")}
+            />
+          </div>
+
+          <p className={"text-bodyS text-base-50"}>{`Координаты: ${watch("latitude")}, ${watch("longitude")}`}</p>
         </div>
 
         <TextInput
-          title="Рейтинг"
+          title="Адрес"
+          disabled
+          {...register("address")}
+          errorMessage={errors.address?.message}
+        />
+
+        <TextInput
+          title="Рейтинг места на картах"
           type="number"
           min="0"
           max="5"
           step="0.1"
-          {...register("rating", { valueAsNumber: true })}
+          {...register("rating", {valueAsNumber: true})}
           errorMessage={errors.rating?.message}
         />
 
@@ -161,7 +166,7 @@ export const EditPlaceRequest = () => {
               </Button>
             </div>
           ))}
-          <Button type="button" variant="tertiary" size="S" onClick={() => appendImage({ value: "" })}>
+          <Button type="button" variant="tertiary" size="S" onClick={() => appendImage({value: ""})}>
             + Добавить изображение
           </Button>
         </div>
@@ -185,7 +190,7 @@ export const EditPlaceRequest = () => {
               </Button>
             </div>
           ))}
-          <Button type="button" variant="tertiary" size="S" onClick={() => appendSocial({ value: "" })}>
+          <Button type="button" variant="tertiary" size="S" onClick={() => appendSocial({value: ""})}>
             + Добавить соцсеть
           </Button>
         </div>
@@ -193,25 +198,16 @@ export const EditPlaceRequest = () => {
         {/* Блок часов работы */}
         <div>
           <h4 className="font-medium text-sm mb-1">Часы работы</h4>
-          {openHoursFields.map((field, index) => (
-            <div key={field.id} className="flex gap-2 mb-2 items-end">
+          {daysOfWeek.map((day, index) => (
+            <div key={index} className="mb-2">
               <TextInput
-                title={`Часы работы ${index + 1}`}
+                title={day} animatedLabel={false}
+                placeholder={day}
                 {...register(`openHours.${index}.value`)}
                 errorMessage={errors.openHours?.[index]?.message}
               />
-
-              <Button
-                variant={"tertiary"} size={"M"}
-                onClick={() => removeOpenHour(index)}
-              >
-                ✕
-              </Button>
             </div>
           ))}
-          <Button type="button" variant="tertiary" size="S" onClick={() => appendOpenHour({ value: "" })}>
-            + Добавить часы работы
-          </Button>
         </div>
 
         <Button type="submit" variant="primary" size="M" className="w-full" isLoading={loading}>

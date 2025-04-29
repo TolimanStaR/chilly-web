@@ -31,12 +31,16 @@ export const OrganizationInfo = () => {
 
   return (
     <div className="space-y-2 bg-white rounded-lg w-full mx-auto">
+      <div className={"flex justify-between items-center h-[40px]"}>
+        <h3 className={"text-xl font-bold"}>Информация об организации</h3>
+      </div>
+
       <InfoField label="Email" value={user.email}/>
       <InfoField label="Телефон" value={user.phoneNumber}/>
 
       <div className={"h-[3px] w-full bg-base-5"}/>
 
-      <InfoField label="Компания" value={user.companyName}/>
+      <InfoField label="Название" value={user.companyName}/>
       <InfoField label="Юр. адрес" value={user.legalAddress}/>
       <InfoField label="ИНН" value={user.inn}/>
       <InfoField label="КПП" value={user.kpp}/>

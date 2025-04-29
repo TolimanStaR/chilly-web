@@ -13,7 +13,7 @@ export const Profile = () => {
   return (
     <div className="flex flex-col p-6 max-w-4xl mx-auto space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Профиль</h2>
+        <h2 className="text-2xl font-bold">Моя организация</h2>
         <Button variant="tertiary" size="S" onClick={logout}>Выйти</Button>
       </div>
 
