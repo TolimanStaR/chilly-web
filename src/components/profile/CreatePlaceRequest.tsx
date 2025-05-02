@@ -1,11 +1,12 @@
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { NewPlaceRequestSchema } from "@/lib/validation//placeRequest";
-import {Button, MapSelector, TextInput} from "@/components/input";
+import {Button, FileInput, MapSelector, TextInput} from "@/components/input";
 import { usePlaceRequestsStore } from "@/stores/PlaceRequestsStore.ts";
 import {PlaceInfoFormData} from "@/types/places.types";
 import {useEffect} from "react";
 import {useNavigate} from "react-router-dom";
+import {uploadFile} from "@/api/files.ts";
 
 export const CreatePlaceRequest = () => {
   const { createPlaceRequest, loading } = usePlaceRequestsStore();
@@ -138,21 +139,43 @@ export const CreatePlaceRequest = () => {
         <div>
           <h4 className="font-medium text-sm mb-1">Изображения</h4>
           {imageFields.map((field, index) => (
-            <div key={field.id} className="flex gap-2 mb-2 items-end">
-              <TextInput
-                title={`URL изображения ${index + 1}`}
-                {...register(`images.${index}.value`)}
-                errorMessage={errors.images?.[index]?.message}
-              />
+            <div key={field.id} className="flex flex-col gap-2 mb-4">
+              <div className="flex items-end gap-2">
+                <FileInput
+                  title={`Изображение ${index + 1}`}
+                  type="file"
+                  accept="image/*"
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    try {
+                      const filename = await uploadFile({data: file});
+                      if (filename && filename.data) {
+                        setValue(`images.${index}.value`, `http://188.120.236.240:8085/api/files/download/${filename.data}`);
+                      }
+                    } catch (err) {
+                      alert("Не удалось загрузить изображение");
+                      console.error(err);
+                    }
+                  }}
+                />
+                <Button variant="tertiary" size="M" onClick={() => removeImage(index)}>✕</Button>
+              </div>
 
-              <Button
-                variant={"tertiary"} size={"M"}
-                onClick={() => removeImage(index)}
-              >
-                ✕
-              </Button>
+              {watch(`images.${index}.value`) && (
+                <img
+                  src={watch(`images.${index}.value`)}
+                  alt={`Изображение ${index + 1}`}
+                  className="h-32 rounded object-contain"
+                />
+              )}
+
+              {errors.images?.[index]?.message && (
+                <p className="text-red-500 text-sm">{errors.images?.[index]?.message}</p>
+              )}
             </div>
           ))}
+
           <Button type="button" variant="tertiary" size="S" onClick={() => appendImage({value: ""})}>
             + Добавить изображение
           </Button>

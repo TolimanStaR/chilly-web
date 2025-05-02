@@ -6,12 +6,13 @@ import { usePlaceRequestsStore } from "@/stores/PlaceRequestsStore.ts";
 import { PlaceInfoFormData } from "@/types/places.types";
 import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import {uploadFile} from "@/api/files.ts";
 
 export const EditPlaceRequest = () => {
   const { id } = useParams<{ id: string }>();
   const {
     updatePlaceRequest,
-    placeRequests,
+    placeRequests, getPlaceRequests,
     loading
   } = usePlaceRequestsStore();
   const navigate = useNavigate();
@@ -44,8 +45,10 @@ export const EditPlaceRequest = () => {
   const daysOfWeek = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"];
 
   useEffect(() => {
-    if (id) {
-      const request = placeRequests!.find(r => r.id.toString() === id);
+    if (!placeRequests) {
+      getPlaceRequests()
+    } else if (id) {
+      const request = placeRequests.find(r => r.id.toString() === id);
       if (request) {
         reset({
           ...request.placeInfo,
@@ -55,7 +58,7 @@ export const EditPlaceRequest = () => {
         });
       }
     }
-  }, [id, placeRequests, reset]);
+  }, [getPlaceRequests, id, placeRequests, reset]);
 
   const onSubmit = (data: PlaceInfoFormData) => {
     if (!id) return;
@@ -151,21 +154,42 @@ export const EditPlaceRequest = () => {
         <div>
           <h4 className="font-medium text-sm mb-1">Изображения</h4>
           {imageFields.map((field, index) => (
-            <div key={field.id} className="flex gap-2 mb-2 items-end">
-              <TextInput
-                title={`URL изображения ${index + 1}`}
-                {...register(`images.${index}.value`)}
-                errorMessage={errors.images?.[index]?.message}
-              />
+            <div key={field.id} className="flex flex-col gap-2 mb-4">
+              <div className="flex items-center gap-2">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    try {
+                      const filename = await uploadFile({ data: file });
+                      if (filename && filename.data) {
+                        setValue(`images.${index}.value`, filename.data);
+                      }
+                    } catch (err) {
+                      alert("Не удалось загрузить изображение");
+                      console.error(err);
+                    }
+                  }}
+                />
+                <Button variant="tertiary" size="M" onClick={() => removeImage(index)}>✕</Button>
+              </div>
 
-              <Button
-                variant={"tertiary"} size={"M"}
-                onClick={() => removeImage(index)}
-              >
-                ✕
-              </Button>
+              {watch(`images.${index}.value`) && (
+                <img
+                  src={`/api/files/download/${watch(`images.${index}.value`)}`}
+                  alt={`Изображение ${index + 1}`}
+                  className="h-32 rounded border object-contain"
+                />
+              )}
+
+              {errors.images?.[index]?.message && (
+                <p className="text-red-500 text-sm">{errors.images?.[index]?.message}</p>
+              )}
             </div>
           ))}
+
           <Button type="button" variant="tertiary" size="S" onClick={() => appendImage({value: ""})}>
             + Добавить изображение
           </Button>
