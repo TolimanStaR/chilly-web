@@ -2,6 +2,7 @@ import {z} from "zod";
 
 export const RegistrationSchema = z.object({
   email: z.string().email('Некорректный email'),
+  description: z.string().min(1, "Введите описание"),
   phoneNumber: z.string().regex(/^\d+$/),
   password: z.string().min(8, 'Пароль должен быть не менее 8 символов'),
   repeatPassword: z.string().min(8, 'Пароль должен быть не менее 8 символов'),
@@ -12,6 +13,9 @@ export const RegistrationSchema = z.object({
   businessCategories: z.array(z.object({
     code: z.string().min(1, "Обязательный код"),
     name: z.string().min(1, "Обязательное название")
+  })),
+  images: z.array(z.object({
+    value: z.string().url("Неверный URL изображения")
   })),
 }).refine((data) => data.password === data.repeatPassword, {
   message: "Пароли не совпадают",

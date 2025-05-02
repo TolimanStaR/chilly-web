@@ -1,10 +1,11 @@
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import useAuthStore from '@/stores/AuthStore';
-import {Button, TextInput} from "@/components/input";
+import {Button, FileInput, TextInput} from "@/components/input";
 import { RegistrationSchema } from "@/lib";
 import {Link, useNavigate} from "react-router-dom";
 import { RegisterData } from '@/types/auth.types.ts';
+import {uploadFile} from "@/api/files.ts";
 
 export const Register = () => {
   const { register: authRegister, loading } = useAuthStore();
@@ -15,11 +16,13 @@ export const Register = () => {
     handleSubmit,
     control,
     watch,
+    setValue,
     formState: { errors },
   } = useForm<RegisterData  & { repeatPassword: string }>({
     resolver: zodResolver(RegistrationSchema),
     defaultValues: {
-      businessCategories: []
+      businessCategories: [],
+      images: []
     }
   });
 
@@ -27,6 +30,12 @@ export const Register = () => {
     control,
     name: "businessCategories"
   });
+
+  const {
+    fields: imageFields,
+    append: appendImage,
+    remove: removeImage,
+  } = useFieldArray({ control, name: "images" });
 
   const onSubmit = (data: RegisterData) => {
     authRegister(data, () => navigate("/login"));
@@ -82,13 +91,21 @@ export const Register = () => {
           />
 
           <TextInput
+            title="Описание организации" type={"area"} required autoComplete={"off"}
+            {...register('companyName')}
+            errorMessage={errors.companyName?.message}
+            className={"min-h-[100px]"}
+          />
+
+          <TextInput
             title="Юридический адрес" required autoComplete={"street-address"}
             {...register('legalAddress')}
             errorMessage={errors.legalAddress?.message}
           />
 
           <div className="grid grid-cols-2 gap-4">
-            <TextInput title="ИНН" required {...register('inn')} autoComplete={"off"} errorMessage={errors.inn?.message}/>
+            <TextInput title="ИНН" required {...register('inn')} autoComplete={"off"}
+                       errorMessage={errors.inn?.message}/>
             <TextInput title="КПП" {...register('kpp')} autoComplete={"off"} errorMessage={errors.kpp?.message}/>
           </div>
 
@@ -128,6 +145,45 @@ export const Register = () => {
             {typeof errors.businessCategories?.message === 'string' && (
               <p className="text-sm text-red-500">{errors.businessCategories.message}</p>
             )}
+          </div>
+
+          <div>
+            <h4 className="font-medium text-sm mb-1">Изображения</h4>
+            {imageFields.map((field, index) => (
+              <div key={field.id} className="flex flex-col gap-2 mb-4">
+                <div className="flex items-end gap-2">
+                  <FileInput
+                    title={`Изображение ${index + 1}`}
+                    type="file"
+                    accept="image/*"
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      try {
+                        const filename = await uploadFile({data: file});
+                        if (filename?.data) {
+                          setValue(`images.${index}.value`, `${import.meta.env.VITE_SERVER_URL}/api/files/download/${filename.data}`);
+                        }
+                      } catch {
+                        alert("Не удалось загрузить изображение");
+                      }
+                    }}
+                  />
+                  <Button variant="tertiary" size="M" onClick={() => removeImage(index)}>✕</Button>
+                </div>
+                {watch(`images.${index}.value`) && (
+                  <img src={watch(`images.${index}.value`)} alt={`Изображение ${index + 1}`}
+                       className="h-32 rounded object-contain"/>
+                )}
+                {errors.images?.[index]?.message && (
+                  <p className="text-red-500 text-sm">{errors.images[index]?.message}</p>
+                )}
+              </div>
+            ))}
+
+            <Button type="button" variant="tertiary" size="S" onClick={() => appendImage({value: ""})} className={"mx-auto"}>
+              + Добавить изображение
+            </Button>
           </div>
 
           <Button

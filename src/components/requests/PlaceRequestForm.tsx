@@ -1,10 +1,10 @@
-// components/forms/PlaceRequestForm.tsx
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { NewPlaceRequestSchema } from "@/lib/validation/placeRequest";
 import {Button, FileInput, MapSelector, TextInput} from "@/components/input";
 import { PlaceInfoFormData } from "@/types/places.types";
-import { uploadFile } from "@/api/files.ts";
+import React from "react";
+import {uploadFile} from "@/api/files.ts";
 
 interface PlaceRequestFormProps {
   defaultValues?: Partial<PlaceInfoFormData>;
@@ -14,13 +14,13 @@ interface PlaceRequestFormProps {
   submitText: string;
 }
 
-export const PlaceRequestForm = ({
-                                   defaultValues,
-                                   onSubmit,
-                                   loading,
-                                   title,
-                                   submitText,
-                                 }: PlaceRequestFormProps) => {
+export const PlaceRequestForm: React.FC<PlaceRequestFormProps> = ({
+  defaultValues,
+  onSubmit,
+  loading,
+  title,
+  submitText,
+}) => {
   const {
     register,
     control,
@@ -115,7 +115,7 @@ export const PlaceRequestForm = ({
                     try {
                       const filename = await uploadFile({ data: file });
                       if (filename?.data) {
-                        setValue(`images.${index}.value`, `http://188.120.236.240:8085/api/files/download/${filename.data}`);
+                        setValue(`images.${index}.value`, `${import.meta.env.VITE_SERVER_URL}/api/files/download/${filename.data}`);
                       }
                     } catch {
                       alert("Не удалось загрузить изображение");
@@ -132,6 +132,7 @@ export const PlaceRequestForm = ({
               )}
             </div>
           ))}
+
           <Button type="button" variant="tertiary" size="S" onClick={() => appendImage({ value: "" })}>
             + Добавить изображение
           </Button>

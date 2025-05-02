@@ -1,5 +1,6 @@
 export type RegisterData = {
   email: string;
+  description: string;
   phoneNumber: string,
   password: string;
   companyName: string;
@@ -10,11 +11,13 @@ export type RegisterData = {
     code: string;
     name: string;
   }[];
+  images: { value: string }[];
 }
 
 export type LoginData = {
   username: string;
   password: string;
+  role: "BUSINESS";
 }
 
 export type Tokens = {

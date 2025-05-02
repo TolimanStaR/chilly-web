@@ -21,7 +21,7 @@ export const Login = () => {
   });
 
   const onSubmit = (data: LoginFormData) => {
-    login(data, () => navigate('/profile'));
+    login({ ...data, role: "BUSINESS" }, () => navigate('/profile'));
   };
 
   return (

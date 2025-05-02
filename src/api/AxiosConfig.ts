@@ -2,7 +2,7 @@ import axios from 'axios';
 import {access_token, refresh_token} from "@/assets/constants/storage.ts";
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://188.120.236.240:8085/api',
+  baseURL: `${import.meta.env.VITE_SERVER_URL}/api`,
 });
 
 api.interceptors.response.use(
