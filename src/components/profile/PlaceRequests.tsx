@@ -19,10 +19,6 @@ export const PlaceRequests = () => {
     return (<div className="text-center text-gray-600">{error}</div>);
   }
 
-  if (loading || !placeRequests) {
-    return <div className="text-center text-gray-600">Загрузка данных о заявках</div>;
-  }
-
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
@@ -32,8 +28,8 @@ export const PlaceRequests = () => {
         </Button>
       </div>
 
-      {loading ? (
-        <p>Загрузка заявок...</p>
+      {loading || !placeRequests ? (
+        <div className="text-center text-gray-600">Загрузка данных о заявках</div>
       ) : placeRequests.length === 0 ? (
         <p className="text-gray-600">Нет активных заявок.</p>
       ) : (

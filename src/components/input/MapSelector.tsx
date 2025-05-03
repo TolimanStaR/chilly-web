@@ -63,8 +63,8 @@ export const MapSelector: React.FC<MapSelectorProps> = ({
           new Style({
             image: new Icon({
               anchor: [0.5, 1],
-              src: "/map-marker.png",
-              scale: 0.15
+              src: "/marker.svg",
+              scale: 0.05, displacement: [0.5, -4.5]
             }),
           })
         );
@@ -106,8 +106,8 @@ export const MapSelector: React.FC<MapSelectorProps> = ({
           new Style({
             image: new Icon({
               anchor: [0.5, 1],
-              src: "/map-marker.png",
-              scale: 0.2
+              src: "/marker.svg",
+              scale: 0.05, displacement: [0.5, -4.5]
             })
           })
         );
