@@ -9,6 +9,7 @@ import {
   OrganizationPlaces,
   PlaceRequests
 } from "@/components/profile";
+import {FAQ} from "@/pages/FAQ.tsx";
 
 const router = createBrowserRouter([
   {
@@ -19,6 +20,7 @@ const router = createBrowserRouter([
       { path: "login", element: <Login /> },
       { path: "register", element: <Register/> },
       { path: 'forgot-password', element: <ForgotPassword/> },
+      { path: 'faq', element: <FAQ/> },
       {
         path: "profile",
         element: (
