@@ -1,9 +1,14 @@
 export type User = {
   email: string;
-  phoneNumber: string;
+  companyDescription: string;
+  phoneNumber: string,
   companyName: string;
   legalAddress: string;
   inn: string;
   kpp: string;
-  businessCategories: { code: string; name: string }[];
+  businessCategories: {
+    code: string;
+    name: string;
+  }[];
+  images: string[];
 }

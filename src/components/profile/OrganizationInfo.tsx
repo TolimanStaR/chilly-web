@@ -31,7 +31,7 @@ export const OrganizationInfo = () => {
         <h3 className={"text-xl font-bold"}>Информация об организации</h3>
       </div>
 
-      {loading || !user && (
+      {(loading || !user) && (
         <div className="text-center mt-10 text-gray-600">Загрузка данных профиля...</div>
       )}
 

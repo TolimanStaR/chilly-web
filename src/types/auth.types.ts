@@ -1,6 +1,6 @@
 export type RegisterData = {
   email: string;
-  description: string;
+  companyDescription: string;
   phoneNumber: string,
   password: string;
   companyName: string;

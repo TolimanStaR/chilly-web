@@ -19,7 +19,7 @@ export const OrganizationPlaces = () => {
       </div>
 
       {(loading || !places) ? (
-        <p className={"text-center"}>Загрузка заявок...</p>
+        <p className={"text-center"}>Загрузка мест...</p>
       ) : error ? (
         <p className={"text-base-60 text-center"}>{error}</p>
       ) : places.length === 0 ? (

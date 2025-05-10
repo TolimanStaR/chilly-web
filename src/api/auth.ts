@@ -1,10 +1,10 @@
-import {LoginData, RegisterData, Tokens} from "@/types/auth.types.ts";
+import {LoginData, Tokens} from "@/types/auth.types.ts";
 import api from "@/api/AxiosConfig.ts";
 import {AxiosError} from "axios";
 import {access_token} from "@/assets/constants/storage.ts";
 import {User} from "@/types/user.types.ts";
 
-export async function register(params: { data: RegisterData }) {
+export async function register(params: { data: User & { password: string } }) {
   try {
     await api.post(
       "/business_users/register",
@@ -12,7 +12,7 @@ export async function register(params: { data: RegisterData }) {
     )
   } catch (e) {
     if (e instanceof AxiosError) {
-      return { error: "Ошибка регистрации" };
+      return { error: e.response!.data.message };
     }
     return { error: "Ошибка регистрации" };
   }

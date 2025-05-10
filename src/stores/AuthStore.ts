@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import {User} from "@/types/user.types";
-import {LoginData, RegisterData} from "@/types/auth.types";
+import {LoginData} from "@/types/auth.types";
 import {getInfo, login, register} from "@/api/auth.ts";
 import {access_token, refresh_token} from "@/assets/constants/storage.ts";
 
@@ -12,7 +12,7 @@ type AuthState = {
 }
 
 type AuthActions = {
-  register: (credentials: RegisterData, callback?: () => void) => void;
+  register: (credentials: User & { password: string }, callback?: () => void) => void;
   login: (credentials: LoginData, callback?: () => void) => void;
   me: () => void;
   logout: () => void;
@@ -28,7 +28,7 @@ const initialState: AuthState = {
 const useAuthStore = create<AuthState & AuthActions>((set) => ({
   ...initialState,
 
-  register: (credentials: RegisterData, callback) => {
+  register: (credentials: User & { password: string }, callback) => {
     set({ loading: true, error: null });
 
     register({ data: credentials })

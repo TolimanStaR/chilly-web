@@ -8,7 +8,7 @@ import { RegisterData } from '@/types/auth.types.ts';
 import {uploadFile} from "@/api/files.ts";
 
 export const Register = () => {
-  const { register: authRegister, loading } = useAuthStore();
+  const { register: authRegister, loading, error } = useAuthStore();
   const navigate = useNavigate();
 
   const {
@@ -38,7 +38,11 @@ export const Register = () => {
   } = useFieldArray({ control, name: "images" });
 
   const onSubmit = (data: RegisterData) => {
-    authRegister(data, () => navigate("/login"));
+    const payload = {
+      ...data,
+      images: data.images.map(img => img.value),
+    };
+    authRegister(payload, () => navigate("/login"));
   };
 
   const password = watch('password');
@@ -52,6 +56,10 @@ export const Register = () => {
             Регистрация
           </h2>
         </div>
+
+        {error && (
+          <p className={"text-bodyM text-red-70 bg-red-5 text-center p-2 rounded-2xl"}>{error}</p>
+        )}
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-2 w-full max-w-md">
           <TextInput
@@ -92,8 +100,8 @@ export const Register = () => {
 
           <TextInput
             title="Описание организации" type={"area"} required autoComplete={"off"}
-            {...register('companyName')}
-            errorMessage={errors.companyName?.message}
+            {...register('companyDescription')}
+            errorMessage={errors.companyDescription?.message}
             className={"min-h-[100px]"}
           />
 

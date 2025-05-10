@@ -2,7 +2,7 @@ import {z} from "zod";
 
 export const RegistrationSchema = z.object({
   email: z.string().email('Некорректный email'),
-  description: z.string().min(1, "Введите описание"),
+  companyDescription: z.string().min(1, "Введите описание"),
   phoneNumber: z.string().regex(/^\d+$/),
   password: z.string().min(8, 'Пароль должен быть не менее 8 символов'),
   repeatPassword: z.string().min(8, 'Пароль должен быть не менее 8 символов'),
