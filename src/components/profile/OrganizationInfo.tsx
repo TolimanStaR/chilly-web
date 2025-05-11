@@ -2,6 +2,7 @@ import {useEffect} from "react";
 import {InfoField} from "@/components/layout";
 import useAuthStore from "@/stores/AuthStore.ts";
 import {Button} from "@/components/input";
+import {Gallery, Item} from "react-photoswipe-gallery";
 
 export const OrganizationInfo = () => {
   const {
@@ -43,6 +44,7 @@ export const OrganizationInfo = () => {
           <div className={"h-[3px] w-full bg-base-5"}/>
 
           <InfoField label="Название" value={user.companyName}/>
+          <InfoField label="Описание" value={user.companyDescription} className={"whitespace-pre-wrap"}/>
           <InfoField label="Юр. адрес" value={user.legalAddress}/>
           <InfoField label="ИНН" value={user.inn}/>
           <InfoField label="КПП" value={user.kpp}/>
@@ -61,6 +63,35 @@ export const OrganizationInfo = () => {
               <p className="text-sm text-gray-500">Нет указанных категорий</p>
             )}
           </div>
+
+          {user.images?.length > 0 && (
+            <div className={"mt-3"}>
+              <h5 className={"text-bodyM font-medium text-base-70 mb-2"}>Изображения</h5>
+              <Gallery>
+                <div className={"flex flex-wrap gap-2"}>
+                  {user.images.map((img, idx) => (
+                    <Item
+                      key={idx}
+                      original={img}
+                      width={1024}
+                      height={768}
+                      alt={`image-${idx}`}
+                    >
+                      {({ref, open}) => (
+                        <img
+                          ref={ref}
+                          onClick={open}
+                          src={img}
+                          alt={`image-${idx}`}
+                          className={"w-[200px] h-[200px] object-contain rounded border border-gray-200 cursor-pointer hover:opacity-80 transition-opacity"}
+                        />
+                      )}
+                    </Item>
+                  ))}
+                </div>
+              </Gallery>
+            </div>
+          )}
         </>
       )}
     </div>
