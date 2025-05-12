@@ -50,7 +50,7 @@ export const Register = () => {
 
   return (
     <div className={"flex flex-col h-full w-full"}>
-      <div className="flex flex-col space-y-4 h-fit w-fit m-auto p-8">
+      <div className="flex flex-col space-y-4 h-fit w-fit m-auto py-8 px-4 sm:px-6 lg:px-8">
         <div className="text-center">
           <h2 className="text-3xl font-bold text-gray-900">
             Регистрация

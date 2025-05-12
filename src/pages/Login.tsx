@@ -25,8 +25,8 @@ export const Login = () => {
   };
 
   return (
-    <div className="flex h-full w-full items-center justify-center px-4 sm:px-6 lg:px-8">
-      <div className="w-full max-w-md space-y-4">
+    <div className="flex flex-col h-full w-full">
+      <div className="w-full max-w-md m-auto space-y-4 py-8 px-4 sm:px-6 lg:px-8">
         <div className="text-center">
           <h2 className="text-3xl font-bold text-gray-900">
             Вход
