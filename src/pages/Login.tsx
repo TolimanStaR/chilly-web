@@ -5,6 +5,7 @@ import useAuthStore from '@/stores/AuthStore';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button, TextInput } from '@/components/input';
 import {LoginSchema} from "@/lib";
+import {useEffect} from "react";
 
 type LoginFormData = z.infer<typeof LoginSchema>;
 
@@ -23,6 +24,10 @@ export const Login = () => {
   const onSubmit = (data: LoginFormData) => {
     login({ ...data, role: "BUSINESS" }, () => navigate('/profile'));
   };
+
+  useEffect(() => {
+    document.title = "Вход"
+  }, []);
 
   return (
     <div className="flex flex-col h-full w-full">

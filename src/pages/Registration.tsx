@@ -6,6 +6,7 @@ import { RegistrationSchema } from "@/lib";
 import {Link, useNavigate} from "react-router-dom";
 import { RegisterData } from '@/types/auth.types.ts';
 import {uploadFile} from "@/api/files.ts";
+import {useEffect} from "react";
 
 export const Register = () => {
   const { register: authRegister, loading, error } = useAuthStore();
@@ -47,6 +48,10 @@ export const Register = () => {
 
   const password = watch('password');
   const repeatPassword = watch('repeatPassword');
+
+  useEffect(() => {
+    document.title = "Регистрация"
+  }, []);
 
   return (
     <div className={"flex flex-col h-full w-full"}>

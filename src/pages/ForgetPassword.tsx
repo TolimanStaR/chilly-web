@@ -44,6 +44,10 @@ export const ForgotPassword = () => {
     return () => clearForm()
   }, [clearForm]);
 
+  useEffect(() => {
+    document.title = "Восстановление пароля"
+  }, []);
+
   return (
     <div className="flex h-full w-full items-center justify-center px-4 sm:px-6 lg:px-8">
       <div className="w-full max-w-md m-auto rounded-lg">
