@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  app:
+    image: ${DOCKER_IMAGE:-tolimanstar/chilly_business_web}
+    env_file:
+      - .env.local
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt
+    restart: always

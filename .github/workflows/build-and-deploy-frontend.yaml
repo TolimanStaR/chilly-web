@@ -1,0 +1,51 @@
+name: Build, Push and Deploy Frontend
+
+on:
+  push:
+    branches: [ "master" ]
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: ${{ secrets.DOCKERHUB_REPO }}:latest
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install sshpass
+        run: sudo apt-get update && sudo apt-get install -y sshpass
+
+      - name: Copy compose file to server
+        run: |
+          sshpass -p "${{ secrets.PASSWORD }}" scp -o StrictHostKeyChecking=no \
+          ./docker-compose.frontend.yaml \
+          ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/frontend/
+
+      - name: Restart frontend container
+        run: |
+          sshpass -p "${{ secrets.PASSWORD }}" ssh -o StrictHostKeyChecking=no \
+          ${{ secrets.USERNAME }}@${{ secrets.HOST }} \
+          "cd /frontend  && \
+          DOCKER_IMAGE=${{ secrets.DOCKERHUB_REPO }}:latest \
+          docker compose -f docker-compose.frontend.yaml down && \
+          docker compose -f docker-compose.frontend.yaml pull && \
+          docker compose -f docker-compose.frontend.yaml up -d"
