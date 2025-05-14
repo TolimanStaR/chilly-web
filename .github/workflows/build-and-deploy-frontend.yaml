@@ -34,11 +34,14 @@ jobs:
       - name: Install sshpass
         run: sudo apt-get update && sudo apt-get install -y sshpass
 
-      - name: Copy compose file to server
-        run: |
-          sshpass -p "${{ secrets.PASSWORD }}" scp -o StrictHostKeyChecking=no \
-          ./docker-compose.frontend.yaml \
-          ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/frontend/
+      - name: Send docker-compose.yml file to the virtual machine
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          source: "docker-compose.frontend.yaml"
+          target: /frontend
 
       - name: Restart frontend container
         run: |
