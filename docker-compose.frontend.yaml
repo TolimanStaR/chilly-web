@@ -4,6 +4,7 @@ services:
   app:
     image: ${DOCKER_IMAGE:-tolimanstar/chilly_business_web}
     env_file:
+      - .env.production
       - .env.local
     ports:
       - "80:80"
