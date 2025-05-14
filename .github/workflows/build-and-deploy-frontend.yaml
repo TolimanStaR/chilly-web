@@ -41,7 +41,7 @@ jobs:
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           source: "docker-compose.frontend.yaml"
-          target: /frontend
+          target: /frontend/
           overwrite: true
 
       - name: Restart frontend container
