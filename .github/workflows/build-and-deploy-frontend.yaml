@@ -42,6 +42,7 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           source: "docker-compose.frontend.yaml"
           target: /frontend
+          overwrite: true
 
       - name: Restart frontend container
         run: |
