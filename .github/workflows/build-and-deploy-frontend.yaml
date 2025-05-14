@@ -34,6 +34,13 @@ jobs:
       - name: Install sshpass
         run: sudo apt-get update && sudo apt-get install -y sshpass
 
+      - name: List files in workspace
+        run: |
+          echo "Current directory: $(pwd)"
+          ls -la ${{ github.workspace }}
+          echo "Trying to find compose file..."
+          find ${{ github.workspace }} -name "docker-compose.frontend.yaml"
+
       - name: Copy compose file to server
         run: |
           sshpass -p "${{ secrets.PASSWORD }}" scp -o StrictHostKeyChecking=no \
